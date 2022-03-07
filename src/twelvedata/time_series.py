@@ -110,11 +110,7 @@ class TimeSeries(object):
 
         postfixes = self._generate_postfixes()
 
-        if self.price_endpoint_enabled:
-            df = self.price_endpoint.as_pandas()
-        else:
-            df = None
-
+        df = self.price_endpoint.as_pandas() if self.price_endpoint_enabled else None
         for ep in self.endpoints:
             tmp_df = ep.as_pandas(**kwargs)
             tmp_df = tmp_df.add_suffix(str(next(postfixes[ep.__class__])))
@@ -130,11 +126,10 @@ class TimeSeries(object):
         return df
 
     def as_url(self, **kwargs):
-        urls = list()
+        urls = []
         if self.price_endpoint_enabled:
             urls.append(self.price_endpoint.as_url())
-        for ep in self.endpoints:
-            urls.append(ep.as_url())
+        urls.extend(ep.as_url() for ep in self.endpoints)
         return urls
 
     def _has_overlays(self):
@@ -142,14 +137,9 @@ class TimeSeries(object):
 
     def _count_subplots(self):
         """Count how many charts should be displayed"""
-        if self.price_endpoint_enabled or self._has_overlays():
-            subplots_count = 1
-        else:
-            subplots_count = 0
-
-        for ep in self.endpoints:
-            subplots_count += ep.is_indicator and not ep.is_overlay
-        return subplots_count
+        return (
+            1 if self.price_endpoint_enabled or self._has_overlays() else 0
+        ) + sum(ep.is_indicator and not ep.is_overlay for ep in self.endpoints)
 
     def _chart_title(self):
         return "{} - {}".format(
@@ -157,17 +147,12 @@ class TimeSeries(object):
         )
 
     def _generate_postfixes(self):
-        # If user specified multiple same endpoints we should add postfixes
-        postfixes = {}
         empty = itertools.cycle(("",))
 
-        for cls, n in Counter(ep.__class__ for ep in self.endpoints).items():
-            if n > 1:
-                postfixes[cls] = itertools.count(1)
-            else:
-                postfixes[cls] = empty
-
-        return postfixes
+        return {
+            cls: itertools.count(1) if n > 1 else empty
+            for cls, n in Counter(ep.__class__ for ep in self.endpoints).items()
+        }
 
     def as_pyplot_figure(self, figsize=(16, 8), candle_width=0.0002):
         import matplotlib.dates as mdates

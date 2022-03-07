@@ -43,9 +43,9 @@ class AsPandasMixin(object):
 
         data = self.as_json()
         if hasattr(self, "is_batch") and self.is_batch:
-            df = convert_collection_to_pandas_multi_index(data)
+            return convert_collection_to_pandas_multi_index(data)
         elif hasattr(self, "method") and self.method == "earnings":
-            df = self.create_basic_df(data, pd, index_column="date", **kwargs)
+            return self.create_basic_df(data, pd, index_column="date", **kwargs)
         elif hasattr(self, "method") and self.method == "earnings_calendar":
             modified_data = []
             for date, row in data.items():
@@ -53,11 +53,9 @@ class AsPandasMixin(object):
                     earning["date"] = date
                     modified_data.append(earning)
 
-            df = self.create_basic_df(modified_data, pd, index_column="date", **kwargs)
+            return self.create_basic_df(modified_data, pd, index_column="date", **kwargs)
         else:
-            df = self.create_basic_df(data, pd, **kwargs)
-
-        return df
+            return self.create_basic_df(data, pd, **kwargs)
 
     @staticmethod
     def create_basic_df(data, pd, index_column="datetime", **kwargs):

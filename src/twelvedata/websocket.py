@@ -164,7 +164,7 @@ class TDWebSocket:
 
     @staticmethod
     def normalize_symbols(s):
-        return set([el.upper() for el in s])
+        return {el.upper() for el in s}
 
     @staticmethod
     def subscribe_event(symbols):

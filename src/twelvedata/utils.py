@@ -134,14 +134,13 @@ def convert_collection_to_pandas(val, indexing_type=None):
     if isinstance(val, (list, tuple)):
         if len(val) == 0:
             return pandas.DataFrame()
-        else:
-            columns_beg = tuple(val[0].keys())
-            columns_end = tuple(val[-1].keys())
-            get_row = operator.itemgetter(*columns_end)
-            data = [get_row(add_null_obj_values(obj, columns_end)) if
-                    columns_beg != columns_end else
-                    get_row(obj) for obj in val]
-            return pandas.DataFrame(data, columns=columns_end)
+        columns_beg = tuple(val[0].keys())
+        columns_end = tuple(val[-1].keys())
+        get_row = operator.itemgetter(*columns_end)
+        data = [get_row(add_null_obj_values(obj, columns_end)) if
+                columns_beg != columns_end else
+                get_row(obj) for obj in val]
+        return pandas.DataFrame(data, columns=columns_end)
     elif isinstance(val, dict):
         try:
             return pandas.DataFrame.from_dict(val, orient="index", dtype="float")
@@ -212,7 +211,4 @@ def parse_interval_in_minutes(interval):
 
     secs = pytimeparse.parse(interval)
 
-    if secs is not None:
-        return secs / 60
-    else:
-        return None
+    return secs / 60 if secs is not None else None

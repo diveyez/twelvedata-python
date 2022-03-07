@@ -31,10 +31,9 @@ class CachedHttpClient(DefaultHttpClient, object):
 
         if h in _cache:
             return _cache[h]
-        else:
-            resp = super(CachedHttpClient, self).get(*args, **kwargs)
-            _cache[h] = resp
-            return resp
+        resp = super(CachedHttpClient, self).get(*args, **kwargs)
+        _cache[h] = resp
+        return resp
 
 
 def _fake_resp(status_code):
@@ -1282,7 +1281,9 @@ def test_http_internal_server_error_response(mock_get):
     http_client = DefaultHttpClient(API_URL)
     with pytest.raises(InternalServerError):
         http_client.get('/fake_url')
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )
 
 
 @patch('twelvedata.http_client.requests.get', return_value=_fake_json_resp(
@@ -1293,7 +1294,9 @@ def test_http_internal_server_error_response_in_json(mock_get):
     with pytest.raises(InternalServerError) as err:
         http_client.get('/fake_url')
         assert str(err) == 'error message'
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )
 
 
 @patch('twelvedata.http_client.requests.get', return_value=_fake_resp(400))
@@ -1301,7 +1304,9 @@ def test_http_bad_request_error_response(mock_get):
     http_client = DefaultHttpClient(API_URL)
     with pytest.raises(BadRequestError):
         http_client.get('/fake_url')
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )
 
 
 @patch('twelvedata.http_client.requests.get', return_value=_fake_json_resp(
@@ -1312,7 +1317,9 @@ def test_http_bad_request_error_response_in_json(mock_get):
     with pytest.raises(BadRequestError) as err:
         http_client.get('/fake_url')
         assert str(err) == 'error message'
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )
 
 
 @patch('twelvedata.http_client.requests.get', return_value=_fake_resp(401))
@@ -1320,7 +1327,9 @@ def test_http_invalid_api_key_response(mock_get):
     http_client = DefaultHttpClient(API_URL)
     with pytest.raises(InvalidApiKeyError):
         http_client.get('/fake_url')
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )
 
 
 @patch('twelvedata.http_client.requests.get', return_value=_fake_json_resp(
@@ -1331,7 +1340,9 @@ def test_http_invalid_api_key_response_in_json(mock_get):
     with pytest.raises(InvalidApiKeyError) as err:
         http_client.get('/fake_url')
         assert str(err) == 'error message'
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )
 
 
 @patch('twelvedata.http_client.requests.get', return_value=_fake_resp(520))
@@ -1339,7 +1350,9 @@ def test_http_other_invalid_response(mock_get):
     http_client = DefaultHttpClient(API_URL)
     with pytest.raises(TwelveDataError):
         http_client.get('/fake_url')
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )
 
 
 @patch('twelvedata.http_client.requests.get', return_value=_fake_json_resp(
@@ -1350,4 +1363,6 @@ def test_http_other_invalid_response_in_json(mock_get):
     with pytest.raises(TwelveDataError) as err:
         http_client.get('/fake_url')
         assert str(err) == 'error message'
-    mock_get.assert_called_once_with(API_URL + '/fake_url', timeout=30, params={'source': 'python'})
+    mock_get.assert_called_once_with(
+        f'{API_URL}/fake_url', timeout=30, params={'source': 'python'}
+    )

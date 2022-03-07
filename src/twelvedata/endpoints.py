@@ -212,7 +212,7 @@ class CustomEndpoint(AsMixin, Endpoint):
     def execute(self, format="JSON", debug=False):
         self.params["format"] = format
         self.params["apikey"] = self.ctx.apikey
-        endpoint = "/" + self.name
+        endpoint = f"/{self.name}"
 
         if debug:
             return build_url(self.ctx.base_url, endpoint, self.params)
@@ -518,9 +518,7 @@ class TechIndicatorsMetaEndpoint(AsMixin, Endpoint):
         self.ctx = ctx
 
     def execute(self, format="JSON", debug=False):
-        params = {}
-        params["format"] = format
-        params["apikey"] = self.ctx.apikey
+        params = {"format": format, "apikey": self.ctx.apikey}
         endpoint = "/technical_indicators"
 
         if debug:
@@ -573,10 +571,8 @@ class StockExchangesListEndpoint(AsMixin, Endpoint):
 
     def execute(self, format="JSON", debug=False):
 
-        params = {}
+        params = {"format": format, "apikey": self.ctx.apikey}
 
-        params["format"] = format
-        params["apikey"] = self.ctx.apikey
         endpoint = "/stock_exchanges"
 
         if debug:
@@ -753,10 +749,8 @@ class CryptocurrencyExchangesListEndpoint(AsMixin, Endpoint):
 
     def execute(self, format="JSON", debug=False):
 
-        params = {}
+        params = {"format": format, "apikey": self.ctx.apikey}
 
-        params["format"] = format
-        params["apikey"] = self.ctx.apikey
         endpoint = "/cryptocurrency_exchanges"
 
         if debug:
@@ -772,9 +766,8 @@ class TechnicalIndicatorsListEndpoint(AsMixin, Endpoint):
 
     def execute(self, format="JSON", debug=False):
 
-        params = {}
+        params = {"apikey": self.ctx.apikey}
 
-        params["apikey"] = self.ctx.apikey
         endpoint = "/technical_indicators"
 
         if debug:
@@ -1537,9 +1530,7 @@ class APIUsageEndpoint(AsMixin, Endpoint):
         self.ctx = ctx
 
     def execute(self, format="JSON", debug=False):
-        params = {}
-        params["format"] = format
-        params["apikey"] = self.ctx.apikey
+        params = {"format": format, "apikey": self.ctx.apikey}
         endpoint = "/api_usage"
 
         if debug:
